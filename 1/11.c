@@ -14,3 +14,13 @@ int main(void) {
         }
     }
 }
+
+//0 - 2
+//1 - 1
+//2 - 0
+//j + x = 2
+//x = 2- j
+//slowoSlowoSlowo
+//slowo_slowo_slowo
+//SlowoSlowoSlowo
+//SLOWO_SLOWO
