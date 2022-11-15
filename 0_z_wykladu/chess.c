@@ -1,61 +1,64 @@
 #include <stdio.h>
 #include <malloc.h>
 
-const int WIN_SCORE = 1000;
-const int LOSE_SCORE = -WIN_SCORE;
+#define WIN_SCORE 1000
+#define LOSE_SCORE ( -1000 )
 #define BOARD_WIDTH 8
 #define BOARD_HEIGHT 8
+//const int BIGGEST_BOARD_SIZE = BOARD_WIDTH > BOARD_HEIGHT ? BOARD_WIDTH : BOARD_HEIGHT;
 #define PIECES_COUNT 6
 const char PIECES[] = {'p', 's', 'g', 'w', 'h', 'k'};
+const int PIECE_MOVE_DISTANCE[] = {2, 1, -1, -1, -1, 1};
 const int SCORES[] = {1, 3, 4, 5, 9, WIN_SCORE};
-const int MOVES[PIECES_COUNT][8][2] = {
+#define MAX_MOVES 8
+const int MOVES[PIECES_COUNT][MAX_MOVES][2] = {
         {
                 {-1, 1},
-                {0, 1},
-                {1, 1}
-            },
+                {0,  1},
+                {1,  1}
+        },
         {
-                {2, 1},
-                {2, -1},
+                {2,  1},
+                {2,  -1},
                 {-2, 1},
                 {-2, -1},
                 {1, 2},
                 {-1, 2},
                 {1, -2},
                 {-1, -2},
-            },
+        },
         {
-                {1, 1},
+                {1,  1},
                 {-1, -1},
-                {1, -1},
+                {1,  -1},
                 {-1, 1},
-            },
+        },
         {
-                {1, 0},
+                {1,  0},
                 {-1, 0},
-                {0, -1},
-                {0, 1},
-            },
+                {0,  -1},
+                {0,  1},
+        },
         {
-                {1, 1},
+                {1,  1},
                 {-1, -1},
-                {1, -1},
-                {-1, 1},
-                {1, 0},
-                {-1, 0},
-                {0, -1},
-                {0, 1},
-            },
-        {
-                {1, 1},
-                {-1, -1},
-                {1, -1},
+                {1,  -1},
                 {-1, 1},
                 {1, 0},
                 {-1, 0},
                 {0, -1},
-                {0, 1},
-            },
+                {0,  1},
+        },
+        {
+                {1,  1},
+                {-1, -1},
+                {1,  -1},
+                {-1, 1},
+                {1, 0},
+                {-1, 0},
+                {0, -1},
+                {0,  1},
+        },
 };
 
 const int get_piece_index(char piece) {
@@ -71,17 +74,16 @@ const int get_piece_score(char piece) {
     return SCORES[get_piece_index(piece)];
 }
 
-int** get_piece_moves(char piece) {
+int **get_piece_moves(char piece) {
     const int i = get_piece_index(piece);
-    int **moves = malloc(8 * sizeof(int*));
-    for (int x = 0; x < 8; x++) {
+    int **moves = malloc(MAX_MOVES * sizeof(int *));
+    for (int x = 0; x < MAX_MOVES; x++) {
         moves[x] = malloc(2 * sizeof(int));
         if (MOVES[i][x][0] == 0 && MOVES[i][x][1] == 0) {
             moves[x] = 0;
         } else {
-            for (int y = 0; y < 2; y++) {
-                moves[x][y] = MOVES[i][x][y];
-            }
+            moves[x][0] = MOVES[i][x][0];
+            moves[x][1] = MOVES[i][x][1];
         }
     }
     return moves;
