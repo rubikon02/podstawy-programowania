@@ -14,7 +14,7 @@ const int SCORES[] = {0,
 const int VECTOR_COUNTS[] = {0,
                              3, 8, 4, 4, 8, 8,
                              3, 8, 4, 4, 8, 8};
-#define DEPTH 6
+#define DEPTH 4
 #define MAX_MOVES 8
 const int MAX_VECTOR_LENGTHS[] = {0,
                                   1, 1, BOARD_SIZE, BOARD_SIZE, BOARD_SIZE, 1,
@@ -79,7 +79,7 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int *from_x, int *fr
     int dummy;
     int score = get_board_score(board);
     if (score >= WIN_SCORE / 2 || score <= LOSE_SCORE / 2 || depth == 0) return score;
-    if (depth % 2 == 0) {                   //ruch komputera
+    if (depth % 2 == (DEPTH % 2)) {                   //ruch komputera
         int max_score = 100 * LOSE_SCORE;
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
@@ -111,9 +111,7 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int *from_x, int *fr
                                     *to_y = dest_y;
                                 }
                             }
-                            if (board[dest_x][dest_y]) {
-                                break;
-                            }
+                            if (board[dest_x][dest_y]) break;
                         }
                     }
                 }
@@ -152,9 +150,7 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int *from_x, int *fr
                                     *to_y = dest_y;
                                 }
                             }
-                            if (board[dest_x][dest_y]) {
-                                break;
-                            }
+                            if (board[dest_x][dest_y]) break;
                         }
                     }
                 }
@@ -190,7 +186,7 @@ int main() {
     int from_x, from_y, to_x, to_y, score = 0;
     printf("\n");
 
-    for (int curr_player = DEPTH % 2 == 0; score != WIN_SCORE && score != LOSE_SCORE; curr_player = !curr_player) {
+    for (int curr_player = 1; score != WIN_SCORE && score != LOSE_SCORE; curr_player = !curr_player) {
         if (curr_player) {
             best_move(board, DEPTH, &from_x, &from_y, &to_x, &to_y);
         } else {
@@ -201,8 +197,7 @@ int main() {
         board[from_x][from_y] = ' ';
         print_board(board);
         score = get_board_score(board);
-        printf("%c[%d][%d]->[%d][%d], wynik: %d\n",
-               PIECE_LETTERS[board[to_x][to_y]], from_x, from_y, to_x, to_y, score);
+        printf("%c[%d][%d]->[%d][%d], wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x, from_y, to_x, to_y, score);
         if (score == WIN_SCORE) printf("Przegrales\n");
         if (score == LOSE_SCORE) printf("Wygrales\n");
         printf("\n");
