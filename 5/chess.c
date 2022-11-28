@@ -86,7 +86,7 @@ void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
         } else {
             printf("   ");
             for (int i = 0; i < BOARD_SIZE * 4 + 1; i++) {
-                printf("=");
+                printf("-");
             }
             printf("\n");
         }
