@@ -68,15 +68,25 @@ int get_board_score(int board[BOARD_SIZE][BOARD_SIZE]) {
 
 void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
     for (int x = 0; x < BOARD_SIZE; ++x) {
-        printf("%d", x);
+        printf("  %d ", x);
     }
     printf("\n");
-    for (int y = 0; y < BOARD_SIZE; y++) {
-        for (int x = 0; x < BOARD_SIZE; x++) {
-            printf("%c", PIECE_LETTERS[board[x][y]]);
-//            printf("%d", board[x][y]);
+    for (int y = 0; y < BOARD_SIZE * 2 + 1; y++) {
+        if (y % 2) {
+            for (int x = 0; x < BOARD_SIZE * 2 + 1; x++) {
+                if (x % 2) {
+                    printf(" %c ", PIECE_LETTERS[board[x / 2][y / 2]]);
+                } else {
+                    printf("|");
+                }
+            }
+            printf(" %d\n", (y - 1) / 2);
+        } else {
+            for (int i = 0; i < BOARD_SIZE * 4 + 1; i++) {
+                printf("=");
+            }
+            printf("\n");
         }
-        printf(" %d\n", y);
     }
 }
 
