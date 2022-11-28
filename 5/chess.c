@@ -67,12 +67,14 @@ int get_board_score(int board[BOARD_SIZE][BOARD_SIZE]) {
 
 
 void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
-    for (int x = 0; x < BOARD_SIZE; ++x) {
-        printf("  %d ", x);
+    printf("   ");
+    for (char x = 'a'; x < 'a' + BOARD_SIZE; x++) {
+        printf("  %c ", x);
     }
     printf("\n");
     for (int y = 0; y < BOARD_SIZE * 2 + 1; y++) {
         if (y % 2) {
+            printf(" %d ", (y - 1) / 2 + 1);
             for (int x = 0; x < BOARD_SIZE * 2 + 1; x++) {
                 if (x % 2) {
                     printf(" %c ", PIECE_LETTERS[board[x / 2][y / 2]]);
@@ -80,14 +82,20 @@ void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
                     printf("|");
                 }
             }
-            printf(" %d\n", (y - 1) / 2);
+            printf(" %d\n", (y - 1) / 2 + 1);
         } else {
+            printf("   ");
             for (int i = 0; i < BOARD_SIZE * 4 + 1; i++) {
                 printf("=");
             }
             printf("\n");
         }
     }
+    printf("   ");
+    for (char x = 'a'; x < 'a' + BOARD_SIZE; x++) {
+        printf("  %c ", x);
+    }
+    printf("\n");
 }
 
 int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta, int *from_x, int *from_y, int *to_x, int *to_y) {
@@ -242,10 +250,12 @@ int main() {
 
     print_board(board);
     int from_x, from_y, to_x, to_y, score = 0;
+    char input[4];
     printf("\n");
 
     for (int curr_player = 1; score != WIN_SCORE && score != LOSE_SCORE; curr_player = !curr_player) {
         if (curr_player) {
+            printf("Komputer mysli...\n");
             clock_t begin = clock();
             best_move(board, DEPTH, 100 * LOSE_SCORE, 100 * WIN_SCORE, &from_x, &from_y, &to_x, &to_y);
             clock_t end = clock();
@@ -253,12 +263,16 @@ int main() {
             printf("Ruch zajal %.2fs\n", time_spent);
         } else {
             printf("Podaj pozycje:");
-            scanf("%d%d%d%d", &from_x, &from_y, &to_x, &to_y);
+            scanf("%s", input);
+            from_x = input[0] - 'a';
+            to_x = input[2] - 'a';
+            from_y = input[1] - '0' - 1;
+            to_y = input[3] - '0' - 1;
         }
         board[to_x][to_y] = board[from_x][from_y];
         board[from_x][from_y] = EMPTY;
         score = get_board_score(board);
-        printf("%c[%d][%d]->[%d][%d], wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x, from_y, to_x, to_y, score);
+        printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x + 'a', from_y + 1, to_x + 'a', to_y + 1, score);
         print_board(board);
         if (score == WIN_SCORE) printf("Przegrales\n");
         if (score == LOSE_SCORE) printf("Wygrales\n");
