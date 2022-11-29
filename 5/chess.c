@@ -98,11 +98,15 @@ void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
     printf("\n");
 }
 
-int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta, int *from_x, int *from_y, int *to_x, int *to_y) {
-    int dummy, score = get_board_score(board);
-    if (score >= WIN_SCORE / 2 || score <= LOSE_SCORE / 2 || depth == 0) return score;
+float best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta, int *from_x, int *from_y, int *to_x, int *to_y) {
+    int d1, d2, d3, d4;
+    float score = (float)get_board_score(board);
+    if (score >= WIN_SCORE / 2 || score <= LOSE_SCORE / 2 || depth == 0) {
+//        printf("Koniec gry\n");
+        return score;
+    }
     if (depth % 2 == (DEPTH % 2)) {                   //ruch komputera
-        int max_score = 100 * LOSE_SCORE;
+        float max_score = 100 * LOSE_SCORE;
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 if (!(1 <= board[x][y] && board[x][y] <= 6)) continue;
@@ -128,7 +132,7 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
 //
 //                                }
 //                                if (depth == DEPTH)
-//                                printf("sprawdzilem z %d %d, dx %d, v_len %d, docelowe %d %d\n", x, y, dx, v_len, dest_x, dest_y);
+//                                printf("sprawdzilem w depth %d z %d %d, dx %d, v_len %d, docelowe %d %d\n", depth, x, y, dx, v_len, dest_x, dest_y);
                                 const int dest_field_content = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = board[x][y];
                                 board[x][y] = EMPTY;
@@ -139,12 +143,13 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
 //                                if (depth == DEPTH && dest_x == 3 && dest_y == 4) {
 //                                    printf("przed sprawdzeniem score %d\n", score);
 //                                }
-                                score = best_move(board, depth - 1, alpha, beta, &dummy, &dummy, &dummy, &dummy);
+                                score = best_move(board, depth - 1, alpha, beta, &d1, &d2, &d3, &d4);
                                 board[x][y] = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = dest_field_content;
 //                                if (depth == DEPTH && dest_x == 3 && dest_y == 4) {
 //                                    printf("po sprawdzeniu score %d, max score %d\n", score, max_score);
 //                                }
+                                score -= (float)(DEPTH - depth) / DEPTH;
                                 if (score > max_score) {
 //                                    printf("new max score %d w depth %d na %d %d\n", score, depth, dest_x, dest_y);
                                     max_score = score;
@@ -152,9 +157,11 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                                     *from_y = y;
                                     *to_x = dest_x;
                                     *to_y = dest_y;
+//                                    printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[x][y]], *from_x + 'a', *from_y + 1, *to_x + 'a', *to_y + 1, score);
+
                                 }
-                                alpha = max_score > alpha ? max_score : alpha;
-                                if (max_score >= beta) break;
+//                                alpha = max_score > alpha ? max_score : alpha;
+//                                if (max_score >= beta) break;
                             }
 //                            if (board[x][y] == COMPUTER_PAWN) {
 //                                if (dx != 0 && v_len != 1) continue;
@@ -167,12 +174,14 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                 }
             }
         }
+        if (max_score == 100 * LOSE_SCORE) printf("AAAAAAAAAAAAA\n\n\n\n");
 //        if (depth == DEPTH) printf("OSTATECZNY ZWROT na %d %d\n", *to_x, *to_y);
 //        printf("Zwracam max %d\n", max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score);
-        return max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score;
-//        return max_score;
+//        return max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score;
+//        printf("return %d\n", max_score);
+        return max_score;
     } else {                                //ruch gracza
-        int min_score = 100 * WIN_SCORE;
+        float min_score = 100 * WIN_SCORE;
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 if (board[x][y] >= 7) {
@@ -197,9 +206,10 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                                     const int dest_field_content = board[dest_x][dest_y];
                                     board[dest_x][dest_y] = board[x][y];
                                     board[x][y] = EMPTY;
-                                    score = best_move(board, depth - 1, alpha, beta, &dummy, &dummy, &dummy, &dummy);
+                                    score = best_move(board, depth - 1, alpha, beta, &d1, &d2, &d3, &d4);
                                     board[x][y] = board[dest_x][dest_y];
                                     board[dest_x][dest_y] = dest_field_content;
+                                    score += (float)(DEPTH - depth) / DEPTH;
                                     if (score < min_score) {
 //                                        printf("new min score %d w depth %d na %d %d\n", score, depth, dest_x, dest_y);
                                         min_score = score;
@@ -207,9 +217,11 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                                         *from_y = y;
                                         *to_x = dest_x;
                                         *to_y = dest_y;
+//                                        printf("%d == %d\n", *from_x, x);
+//                                        printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[x][y]], *from_x + 'a', *from_y + 1, *to_x + 'a', *to_y + 1, score);
                                     }
-                                    beta = min_score < beta ? min_score : beta;
-                                    if (min_score <= alpha) break;
+//                                    beta = min_score < beta ? min_score : beta;
+//                                    if (min_score <= alpha) break;
                                 }
                             }
                             if (board[dest_x][dest_y]) break;
@@ -218,25 +230,26 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                 }
             }
         }
+        if (min_score == 100 * WIN_SCORE) printf("BBBBBBBBBBBBBB\n\n\n\n");
 //        if (depth == DEPTH) printf("OSTATECZNY ZWROT\n");
 //        printf("Zwracam min %d\n", min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score);
-        return min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score;
-//        return min_score;
+//        return min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score;
+        return min_score;
     }
 }
 
 
 int main() {
-    int board[BOARD_SIZE][BOARD_SIZE] = {
-            {4, 1, 0, 0, 0, 0, 7, 10},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {6, 1, 0, 0, 0, 0, 7, 12},
-            {5, 1, 0, 0, 0, 0, 7, 11},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {4, 1, 0, 0, 0, 0, 7, 10},
-    };
+//    int board[BOARD_SIZE][BOARD_SIZE] = {
+//            {4, 1, 0, 0, 0, 0, 7, 10},
+//            {2, 1, 0, 0, 0, 0, 7, 8},
+//            {3, 1, 0, 0, 0, 0, 7, 9},
+//            {6, 1, 0, 0, 0, 0, 7, 12},
+//            {5, 1, 0, 0, 0, 0, 7, 11},
+//            {3, 1, 0, 0, 0, 0, 7, 9},
+//            {2, 1, 0, 0, 0, 0, 7, 8},
+//            {4, 1, 0, 0, 0, 0, 7, 10},
+//    };
 //    int board[BOARD_SIZE][BOARD_SIZE] = {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
@@ -247,6 +260,26 @@ int main() {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //    };
+//    int board[BOARD_SIZE][BOARD_SIZE] = {
+//            {12, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 4},
+//            {0, 0, 0, 0, 0, 0,  0, 4},
+//            {0, 0, 0, 0, 0, 0, 0, 4},
+//            {0, 0, 0, 0, 0, 0,  4, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {6, 0, 0, 0, 0, 0,  0, 0},
+//    };
+    int board[BOARD_SIZE][BOARD_SIZE] = {
+            {6, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {4, 4, 4, 4, 0, 0,  0, 0},
+            {0, 0, 0, 4, 0, 0,  0, 0},
+            {0, 0, 0, 4, 0, 0,  0, 0},
+            {12, 0, 0, 4, 0, 0,  0, 0},
+    };
 
     print_board(board);
     int from_x, from_y, to_x, to_y, score = 0;
