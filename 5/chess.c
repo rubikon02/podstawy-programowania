@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#define DEPTH 5
-#define CHECK_PLAYER_MOVES 1
+#define DEPTH 8
+#define CHECK_PLAYER_MOVES 0
 
 #define WIN_SCORE 1000
 #define LOSE_SCORE ( -1000 )
@@ -151,16 +151,16 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                                 if (score > max_score) {
 //                                    printf("new max score %d w depth %d na %d %d\n", score, depth, dest_x, dest_y);
                                     max_score = score;
-                                    if (depth == DEPTH - 1 && score > WIN_SCORE / 2) {
-                                        max_score = WIN_SCORE;
-                                    }
+//                                    if (depth == DEPTH - 1 && score > WIN_SCORE / 2) {
+//                                        max_score = WIN_SCORE;
+//                                    }
                                     *from_x = x;
                                     *from_y = y;
                                     *to_x = dest_x;
                                     *to_y = dest_y;
                                 }
-                                alpha = max_score > alpha ? max_score : alpha;
-                                if (max_score >= beta) break;
+//                                alpha = max_score > alpha ? max_score : alpha;
+//                                if (max_score >= beta) break;
                             }
 //                            if (board[x][y] == COMPUTER_PAWN) {
 //                                if (dx != 0 && v_len != 1) continue;
@@ -175,8 +175,8 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
         }
 //        if (depth == DEPTH) printf("OSTATECZNY ZWROT na %d %d\n", *to_x, *to_y);
 //        printf("Zwracam max %d\n", max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score);
-        return max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score;
-//        return max_score;
+//        return max_score == 100 * LOSE_SCORE ? get_board_score(board) : max_score;
+        return max_score;
     } else {                                //ruch gracza
         int min_score = 100 * WIN_SCORE;
         for (int x = 0; x < BOARD_SIZE; x++) {
@@ -209,16 +209,16 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
                                     if (score < min_score) {
 //                                        printf("new min score %d w depth %d na %d %d\n", score, depth, dest_x, dest_y);
                                         min_score = score;
-                                        if (depth == DEPTH - 1 && score < LOSE_SCORE / 2) {
-                                            min_score = LOSE_SCORE;
-                                        }
+//                                        if (depth == DEPTH - 1 && score < LOSE_SCORE / 2) {
+//                                            min_score = LOSE_SCORE;
+//                                        }
                                         *from_x = x;
                                         *from_y = y;
                                         *to_x = dest_x;
                                         *to_y = dest_y;
                                     }
-                                    beta = min_score < beta ? min_score : beta;
-                                    if (min_score <= alpha) break;
+//                                    beta = min_score < beta ? min_score : beta;
+//                                    if (min_score <= alpha) break;
                                 }
                             }
                             if (board[dest_x][dest_y]) break;
@@ -229,8 +229,8 @@ int best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, int alpha, int beta,
         }
 //        if (depth == DEPTH) printf("OSTATECZNY ZWROT\n");
 //        printf("Zwracam min %d\n", min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score);
-        return min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score;
-//        return min_score;
+//        return min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score;
+        return min_score;
     }
 }
 
@@ -265,26 +265,26 @@ int main() {
     printf("Glebokosc sprawdzania %d\n", DEPTH);
     printf("Sprawdzanie poprawnosci ruchow gracza %d\n", CHECK_PLAYER_MOVES);
     printf("\n");
-    int board[BOARD_SIZE][BOARD_SIZE] = {
-            {4, 1, 0, 0, 0, 0, 7, 10},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {6, 1, 0, 0, 0, 0, 7, 12},
-            {5, 1, 0, 0, 0, 0, 7, 11},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {4, 1, 0, 0, 0, 0, 7, 10},
-    };
 //    int board[BOARD_SIZE][BOARD_SIZE] = {
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, COMPUTER_PAWN, 0, 0, 0, 0,  0, 0},
-//            {0, COMPUTER_PAWN, 0, 0, 0, PLAYER_PAWN, 0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {4, 1, 0, 0, 0, 0, 7, 10},
+//            {2, 1, 0, 0, 0, 0, 7, 8},
+//            {3, 1, 0, 0, 0, 0, 7, 9},
+//            {6, 1, 0, 0, 0, 0, 7, 12},
+//            {5, 1, 0, 0, 0, 0, 7, 11},
+//            {3, 1, 0, 0, 0, 0, 7, 9},
+//            {2, 1, 0, 0, 0, 0, 7, 8},
+//            {4, 1, 0, 0, 0, 0, 7, 10},
 //    };
+    int board[BOARD_SIZE][BOARD_SIZE] = {
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, COMPUTER_PAWN, 0, 0, 0, PLAYER_PAWN,  0, 0},
+            {0, COMPUTER_PAWN, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {6, 0, 0, 0, 0, 0,  0, 12},
+    };
 
     print_board(board);
     int from_x, from_y, to_x, to_y, score = 0;
