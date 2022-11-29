@@ -2,7 +2,7 @@
 #include <time.h>
 
 #define DEPTH 5
-#define CHECK_PLAYER_MOVES 0
+#define CHECK_PLAYER_MOVES 1
 
 #define WIN_SCORE 1000
 #define LOSE_SCORE ( -1000 )
@@ -200,7 +200,7 @@ int is_player_move_valid(int board[BOARD_SIZE][BOARD_SIZE], int from_x, int from
     float score = best_move(board, 1, 1, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
     board[from_x][from_y] = board[to_x][to_y];
     board[to_x][to_y] = dest_field_content;
-//    float score = best_move(board, 0, 2, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
+
     if (score > WIN_SCORE / 2) return 0;
 
     int move_found = 0;
@@ -247,7 +247,7 @@ int main() {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 12, 0, 0, 0,  0, 0},
 //    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz może zrobić szach mat
+//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz może zrobić szach mat na d4d3
 //            {12, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
@@ -257,7 +257,7 @@ int main() {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 6, 0, 0, 0,  0, 0},
 //    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz nie może ruszyć się królem na g3f3 (pod szach)
+//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz nie może ruszyć się królem na g3f3 pod szach
 //            {6, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
