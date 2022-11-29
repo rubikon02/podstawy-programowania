@@ -162,18 +162,18 @@ float best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, float alpha, float
                                     *from_y = y;
                                     *to_x = dest_x;
                                     *to_y = dest_y;
-                                    if (depth == DEPTH - 2 && score > WIN_SCORE / 2) {
-                                        king_captured_in_2_turns = 1;
+//                                    if (depth == DEPTH - 2 && score > WIN_SCORE / 2) {
 //                                        king_captured_in_2_turns = 1;
-//                                        printf("depth %d, score %f, max_score %f\n", depth, score, max_score);
-//                                        print_board(board);
-//                                        return WIN_SCORE;
-                                    }
+////                                        king_captured_in_2_turns = 1;
+////                                        printf("depth %d, score %f, max_score %f\n", depth, score, max_score);
+////                                        print_board(board);
+////                                        return WIN_SCORE;
+//                                    }
 //                                    printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[x][y]], *from_x + 'a', *from_y + 1, *to_x + 'a', *to_y + 1, score);
 
                                 }
-//                                alpha = max_score > alpha ? max_score : alpha;
-//                                if (max_score >= beta) break;
+                                alpha = max_score > alpha ? max_score : alpha;
+                                if (max_score >= beta) break;
                             }
 //                            if (board[x][y] == COMPUTER_PAWN) {
 //                                if (dx != 0 && v_len != 1) continue;
@@ -229,18 +229,18 @@ float best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, float alpha, float
                                         *from_y = y;
                                         *to_x = dest_x;
                                         *to_y = dest_y;
-                                        if (depth == DEPTH - 3 && score < LOSE_SCORE / 2) {
-//                                            printf("score %d\n", score);
-                                            king_captured_in_2_turns = -1;
-//                                            printf("depth %d, score %f, max_score %f\n", depth, score, min_score);
-//                                            print_board(board);
-//                                            return LOSE_SCORE;
-                                        }
+//                                        if (depth == DEPTH - 3 && score < LOSE_SCORE / 2) {
+////                                            printf("score %d\n", score);
+//                                            king_captured_in_2_turns = -1;
+////                                            printf("depth %d, score %f, max_score %f\n", depth, score, min_score);
+////                                            print_board(board);
+////                                            return LOSE_SCORE;
+//                                        }
 //                                        printf("%d == %d\n", *from_x, x);
 //                                        printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[x][y]], *from_x + 'a', *from_y + 1, *to_x + 'a', *to_y + 1, score);
                                     }
-//                                    beta = min_score < beta ? min_score : beta;
-//                                    if (min_score <= alpha) break;
+                                    beta = min_score < beta ? min_score : beta;
+                                    if (min_score <= alpha) break;
                                 }
                             }
                             if (board[dest_x][dest_y]) break;
@@ -249,7 +249,7 @@ float best_move(int board[BOARD_SIZE][BOARD_SIZE], int depth, float alpha, float
                 }
             }
         }
-        if (min_score == 100 * WIN_SCORE) printf("BBBBBBBBBBBBBB\n\n\n\n");
+//        if (min_score == 100 * WIN_SCORE) printf("BBBBBBBBBBBBBB\n\n\n\n");
 //        if (depth == DEPTH) printf("OSTATECZNY ZWROT\n");
 //        printf("Zwracam min %d\n", min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score);
 //        return min_score == 100 * WIN_SCORE ? get_board_score(board) : min_score;
@@ -297,6 +297,7 @@ int main() {
 //    };
     printf("Glebokosc sprawdzania %d\n", DEPTH);
     printf("Sprawdzanie poprawnosci ruchow gracza %d\n", CHECK_PLAYER_MOVES);
+    printf("Podawaj ruchy w formacie e7e5\n");
     printf("\n");
 //    int board[BOARD_SIZE][BOARD_SIZE] = {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
@@ -318,16 +319,16 @@ int main() {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {6, 0, 0, 0, 0, 0,  0, 0},
 //    };
-    int board[BOARD_SIZE][BOARD_SIZE] = {
-            {6, 0, 0, 0, 0, 0,  0, 0},
-            {0, 0, 0, 0, 0, 0,  0, 0},
-            {0, 0, 0, 0, 0, 0,  0, 0},
-            {0, 0, 0, 4, 0, 0, 0, 0},
-            {4, 4, 0, 4, 4, 0,  0, 0},
-            {0, 0, 0, 0, 0, 0,  0, 0},
-            {0, 0, 0, 0, 0, 0,  0, 0},
-            {0, 0, 12, 0, 0, 0,  0, 0},
-    };
+//    int board[BOARD_SIZE][BOARD_SIZE] = {
+//            {6, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 4, 0, 0, 0, 0},
+//            {4, 4, 0, 4, 4, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 0, 0, 0, 0,  0, 0},
+//            {0, 0, 12, 0, 0, 0,  0, 0},
+//    };
 //    int board[BOARD_SIZE][BOARD_SIZE] = {
 //            {6, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 0, 0, 0, 0, 0,  0, 0},
@@ -338,25 +339,26 @@ int main() {
 //            {0, 0, 0, 0, 0, 0,  0, 0},
 //            {0, 12, 0, 0, 0, 0,  0, 0},
 //    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {
-//            {12, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 10, 0, 0, 0, 0},
-//            {10, 10, 0, 10, 10, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 6, 0, 0, 0,  0, 0},
-//    };
+    int board[BOARD_SIZE][BOARD_SIZE] = {
+            {12, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 10, 0, 0, 0, 0},
+            {10, 10, 0, 10, 10, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 0, 0, 0, 0,  0, 0},
+            {0, 0, 6, 0, 0, 0,  0, 0},
+    };
 
 
     print_board(board);
-    int from_x, from_y, to_x, to_y;
+    int from_x, from_y, to_x, to_y, dummy;
     float score = 0, best_move_score;
     char input[4];
     printf("\n");
 
-    for (int curr_player = 1; score != WIN_SCORE && score != LOSE_SCORE; curr_player = !curr_player) {
+    for (int curr_player = 1;; curr_player = !curr_player) {
+
         if (curr_player) {
             printf("Komputer mysli...\n");
             clock_t begin = clock();
@@ -392,13 +394,17 @@ int main() {
         score = get_board_score(board);
         printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x + 'a', from_y + 1, to_x + 'a', to_y + 1, score);
         print_board(board);
+        float temp_score = best_move(board, 2, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
+        if (temp_score > WIN_SCORE / 2) { printf("Przegrales\n"); return 0; }
+        if (temp_score < LOSE_SCORE / 2) { printf("Wygrales\n"); return 0; }
+
 //        if (best_move_score > WIN_SCORE / 2) printf("Przegrales\n");
 //        if (best_move_score < LOSE_SCORE / 2) printf("Wygrales\n");
-        if (curr_player) {
-            if (king_captured_in_2_turns == 1) { printf("Przegrales\n"); return 0; }
-        } else {
-            if (king_captured_in_2_turns == -1) { printf("Wygrales\n"); return 0; }
-        }
+//        if (curr_player) {
+//            if (king_captured_in_2_turns == 1) { printf("Przegrales\n"); return 0; }
+//        } else {
+//            if (king_captured_in_2_turns == -1) { printf("Wygrales\n"); return 0; }
+//        }
 //        if (score == WIN_SCORE) printf("Przegrales\n");
 //        if (score == LOSE_SCORE) printf("Wygrales\n");
 //        if (curr_player) {
