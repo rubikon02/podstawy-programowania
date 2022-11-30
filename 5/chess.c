@@ -124,6 +124,9 @@ float best_move(int board[BOARD_SIZE][BOARD_SIZE], int is_maximizing, int depth,
                                 const int dest_field_content = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = board[x][y];
                                 board[x][y] = EMPTY;
+                                if (board[dest_x][dest_y] == COMPUTER_PAWN && dest_y == 7) {
+                                    board[dest_x][dest_y] += 4;
+                                }
                                 score = best_move(board, 0, depth - 1, alpha, beta, &dummy, &dummy, &dummy, &dummy);
                                 board[x][y] = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = dest_field_content;
@@ -165,6 +168,9 @@ float best_move(int board[BOARD_SIZE][BOARD_SIZE], int is_maximizing, int depth,
                                 const int dest_field_content = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = board[x][y];
                                 board[x][y] = EMPTY;
+                                if (board[dest_x][dest_y] == PLAYER_PAWN && dest_y == 0) {
+                                    board[dest_x][dest_y] += 4;
+                                }
                                 score = best_move(board, 1, depth - 1, alpha, beta, &dummy, &dummy, &dummy, &dummy);
                                 board[x][y] = board[dest_x][dest_y];
                                 board[dest_x][dest_y] = dest_field_content;
