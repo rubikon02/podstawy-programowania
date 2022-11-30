@@ -103,7 +103,7 @@ void print_board(int board[BOARD_SIZE][BOARD_SIZE]) {
 float best_move(int board[BOARD_SIZE][BOARD_SIZE], int is_maximizing, int depth, float alpha, float beta, int *from_x, int *from_y, int *to_x, int *to_y) {
     int dummy;
     float score = (float)get_board_score(board);
-    if (score >= WIN_SCORE / 2 || score <= LOSE_SCORE / 2 || depth == 0) return score;
+    if (score >= WIN_SCORE / 2.0 || score <= LOSE_SCORE / 2.0 || depth == 0) return score;
     if (is_maximizing) {                   //ruch komputera
         float max_score = 100 * LOSE_SCORE;
         for (int x = 0; x < BOARD_SIZE; x++) {
@@ -207,7 +207,7 @@ int is_player_move_valid(int board[BOARD_SIZE][BOARD_SIZE], int from_x, int from
     board[from_x][from_y] = board[to_x][to_y];
     board[to_x][to_y] = dest_field_content;
 
-    if (score > WIN_SCORE / 2) return 0;
+    if (score > WIN_SCORE / 2.0) return 0;
 
     int move_found = 0;
     for (int vi = 0; vi < VECTOR_COUNTS[board[from_x][from_y]]; vi++) {
@@ -331,8 +331,8 @@ int main() {
         printf("%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x + 'a', from_y + 1, to_x + 'a', to_y + 1, (int)score);
         print_board(board);
         score = best_move(board, !curr_player, 2, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
-        if (score > WIN_SCORE / 2) { printf("Przegrales\n"); return 0; }
-        if (score < LOSE_SCORE / 2) { printf("Wygrales\n"); return 0; }
+        if (score > WIN_SCORE / 2.0) { printf("Przegrales\n"); return 0; }
+        if (score < LOSE_SCORE / 2.0) { printf("Wygrales\n"); return 0; }
         printf("\n");
     }
 }
