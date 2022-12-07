@@ -26,7 +26,6 @@ void dodaj_el(struct student **pierwszy, char nazwisko[10], int ocena) {
     nowy_student->ocena = ocena;
     nowy_student->nastepny = 0;
     strcpy(nowy_student->nazwisko, nazwisko);
-
     if (ww == 0) {
         *pierwszy = nowy_student;
     } else {

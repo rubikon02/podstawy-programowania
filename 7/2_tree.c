@@ -12,7 +12,7 @@ void wypisz(struct el_drzewa **pierwszy, int depth) {
     if (!ww) return;
     wypisz(&ww->lewy, depth + 1);
     for (int i = 0; i < depth; i++) {
-        printf("  ");
+        printf(" ");
     }
     printf("%d: %d\n", depth, ww->w);
     wypisz(&ww->prawy, depth + 1);
