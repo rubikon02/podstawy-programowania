@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 struct el_drzewa {
     int w;
@@ -16,12 +15,6 @@ void wypisz(struct el_drzewa **pierwszy, int depth) {
     }
     printf("%d: %d\n", depth, ww->w);
     wypisz(&ww->prawy, depth + 1);
-//    if (depth == 0) printf("      ");
-//    printf("%d: %d\n", depth, ww->w);
-//    if (ww->lewy) printf("lewy  ");
-//    wypisz(&ww->lewy, depth + 1);
-//    if (ww->prawy) printf("prawy ");
-//    wypisz(&ww->prawy, depth + 1);
 }
 
 void wstaw(struct el_drzewa **pierwszy, int w) {
@@ -34,13 +27,6 @@ void wstaw(struct el_drzewa **pierwszy, int w) {
         *pierwszy = nowy;
         return;
     }
-//    if (w < ww->w) {
-//        while (ww->lewy) ww = ww->lewy;
-//        ww->lewy = nowy;
-//    } else {
-//        while (ww->prawy) ww = ww->prawy;
-//        ww->prawy = nowy;
-//    }
     while (1) {
         if (w < ww->w) {
             if (ww->lewy) {
@@ -60,7 +46,7 @@ void wstaw(struct el_drzewa **pierwszy, int w) {
     }
 }
 
-struct el_drzewa * znajdz(struct el_drzewa **pierwszy, int w) {
+struct el_drzewa *znajdz(struct el_drzewa **pierwszy, int w) {
     struct el_drzewa *ww = *pierwszy;
     while (1) {
         if (ww == 0) return 0;
@@ -74,7 +60,7 @@ struct el_drzewa * znajdz(struct el_drzewa **pierwszy, int w) {
     }
 }
 
-struct el_drzewa * skopiuj_drzewo(struct el_drzewa *el_drzewa) {
+struct el_drzewa *skopiuj_drzewo(struct el_drzewa *el_drzewa) {
     struct el_drzewa *nowy = malloc(sizeof(struct el_drzewa));
     nowy->w = el_drzewa->w;
     nowy->lewy = el_drzewa->lewy ? el_drzewa->lewy : 0;
