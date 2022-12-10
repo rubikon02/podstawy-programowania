@@ -63,10 +63,8 @@ struct el_drzewa *znajdz(struct el_drzewa **pierwszy, int w) {
 struct el_drzewa *skopiuj_drzewo(struct el_drzewa *el_drzewa) {
     struct el_drzewa *nowy = malloc(sizeof(struct el_drzewa));
     nowy->w = el_drzewa->w;
-    nowy->lewy = el_drzewa->lewy ? el_drzewa->lewy : 0;
-    nowy->prawy = el_drzewa->prawy ? el_drzewa->prawy : 0;
-    if (el_drzewa->lewy) skopiuj_drzewo(el_drzewa->lewy);
-    if (el_drzewa->prawy) skopiuj_drzewo(el_drzewa->prawy);
+    nowy->lewy = el_drzewa->lewy ? skopiuj_drzewo(el_drzewa->lewy) : 0;
+    nowy->prawy = el_drzewa->prawy ? skopiuj_drzewo(el_drzewa->prawy) : 0;
     return nowy;
 }
 
@@ -94,10 +92,10 @@ int main() {
     wstaw(&ws, 0);
     wypisz(&ws, 0);
 
+    printf("%d\n", znajdz(&ws, 3)->w);
+
     struct el_drzewa *kopia = skopiuj_drzewo(ws);
+    zwolnij(&ws);
     printf("Kopia drzewa:\n");
     wypisz(&kopia, 0);
-
-    printf("%d\n", znajdz(&ws, 3)->w);
-    zwolnij(&ws);
 }
