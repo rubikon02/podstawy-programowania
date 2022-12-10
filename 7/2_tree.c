@@ -6,22 +6,27 @@ struct el_drzewa {
     struct el_drzewa *lewy, *prawy;
 };
 
-void wypisz(struct el_drzewa **pierwszy, int depth) {
-    struct el_drzewa *ww = *pierwszy;
+struct el_drzewa *nowy_el(int w, struct el_drzewa *lewy, struct el_drzewa *prawy) {
+    struct el_drzewa *nowy = malloc(sizeof(struct el_drzewa));
+    nowy->w = w;
+    nowy->lewy = lewy;
+    nowy->prawy = prawy;
+    return nowy;
+}
+
+void wypisz(const struct el_drzewa *ww, int depth) {
     if (!ww) return;
-    wypisz(&ww->lewy, depth + 1);
+    wypisz(ww->lewy, depth + 1);
     for (int i = 0; i < depth; i++) {
         printf(" ");
     }
     printf("%d: %d\n", depth, ww->w);
-    wypisz(&ww->prawy, depth + 1);
+    wypisz(ww->prawy, depth + 1);
 }
 
 void wstaw(struct el_drzewa **pierwszy, int w) {
-    struct el_drzewa *nowy = malloc(sizeof(struct el_drzewa)), *ww = *pierwszy;
-    nowy->w = w;
-    nowy->lewy = 0;
-    nowy->prawy = 0;
+    struct el_drzewa *nowy = nowy_el(w, 0, 0);
+    struct el_drzewa *ww = *pierwszy;
 
     if (ww == 0) {
         *pierwszy = nowy;
@@ -60,12 +65,26 @@ struct el_drzewa *znajdz(struct el_drzewa **pierwszy, int w) {
     }
 }
 
-struct el_drzewa *skopiuj_drzewo(struct el_drzewa *el_drzewa) {
-    struct el_drzewa *nowy = malloc(sizeof(struct el_drzewa));
-    nowy->w = el_drzewa->w;
-    nowy->lewy = el_drzewa->lewy ? skopiuj_drzewo(el_drzewa->lewy) : 0;
-    nowy->prawy = el_drzewa->prawy ? skopiuj_drzewo(el_drzewa->prawy) : 0;
-    return nowy;
+struct el_drzewa *skopiuj_drzewo(const struct el_drzewa *el_drzewa) {
+    if (!el_drzewa) return 0;
+    return nowy_el(
+            el_drzewa->w,
+            el_drzewa->lewy ? skopiuj_drzewo(el_drzewa->lewy) : 0,
+            el_drzewa->prawy ? skopiuj_drzewo(el_drzewa->prawy) : 0
+    );
+}
+
+struct el_drzewa *dodaj_drzewa_rekurencja(struct el_drzewa *a, const struct el_drzewa *b) {
+    if (!a) return skopiuj_drzewo(b);
+    if (!b) return skopiuj_drzewo(a);
+    a->w += b->w;
+    a->lewy = dodaj_drzewa_rekurencja(a->lewy, b->lewy);
+    a->prawy = dodaj_drzewa_rekurencja(a->prawy, b->prawy);
+    return a;
+}
+
+struct el_drzewa *dodaj_drzewa(const struct el_drzewa *a, const struct el_drzewa *b) {
+    return dodaj_drzewa_rekurencja(skopiuj_drzewo(a), b);
 }
 
 void zwolnij(struct el_drzewa **pierwszy) {
@@ -90,12 +109,19 @@ int main() {
     wstaw(&ws, 3);
     wstaw(&ws, 2);
     wstaw(&ws, 0);
-    wypisz(&ws, 0);
+    wypisz(ws, 0);
 
-    printf("%d\n", znajdz(&ws, 3)->w);
+    struct el_drzewa *znaleziony = znajdz(&ws, 3);
+    if (znaleziony) {
+        printf("Znalazlem %d\n", znaleziony->w);
+    } else {
+        printf("Nie ma takiego elementu\n");
+    }
 
-    struct el_drzewa *kopia = skopiuj_drzewo(ws);
-    zwolnij(&ws);
-    printf("Kopia drzewa:\n");
-    wypisz(&kopia, 0);
+//    struct el_drzewa *kopia = skopiuj_drzewo(ws);
+//    zwolnij(&ws);
+//    printf("Kopia drzewa:\n");
+//    wypisz(&kopia, 0);
+
+    wypisz(dodaj_drzewa(ws, ws), 0);
 }
