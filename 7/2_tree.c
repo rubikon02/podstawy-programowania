@@ -77,6 +77,7 @@ void zwolnij(struct el_drzewa **pierwszy) {
     zwolnij(&ww->prawy);
     printf("zwalniam %d\n", ww->w);
     free(ww);
+    *pierwszy = 0;
 }
 
 int main() {
