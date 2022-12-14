@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 3.23)
+#cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.16)
 project(Programy C)
 
 set(CMAKE_C_STANDARD 11)
+#link_libraries(ws2_32 wsock32)
+
+
 
 
 set (EXCLUDE_DIR "cmake-build-debug")
