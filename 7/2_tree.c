@@ -76,7 +76,7 @@ struct el_drzewa *skopiuj_drzewo(const struct el_drzewa *el_drzewa) {
 
 struct el_drzewa *dodaj_drzewa_rekurencja(struct el_drzewa *a, const struct el_drzewa *b) {
     if (!a) return skopiuj_drzewo(b);
-    if (!b) return skopiuj_drzewo(a);
+    if (!b) return a;
     a->w += b->w;
     a->lewy = dodaj_drzewa_rekurencja(a->lewy, b->lewy);
     a->prawy = dodaj_drzewa_rekurencja(a->prawy, b->prawy);
