@@ -26,7 +26,7 @@ int main() {
 
     status = bind(gniazdo, (struct sockaddr *) &ser, sizeof ser);
     if (status == -1) {
-        printf("Błąd bind\n");
+        printf("Nie można przypisać portu %d\n", PORT);
         return 0;
     }
 

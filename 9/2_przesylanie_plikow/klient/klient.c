@@ -7,7 +7,7 @@
 #define IP "127.0.0.23"
 
 int main() {
-    printf("Podlaczam sie do serwera %s:%d\n", IP, PORT);
+    printf("Uruchamiam klienta i nawiązuję połączenie z %s:%d\n", IP, PORT);
 
     int gniazdo;
     ssize_t status;
@@ -21,7 +21,7 @@ int main() {
 
     gniazdo = socket(AF_INET, SOCK_STREAM, 0);
     if (gniazdo == -1) {
-        printf("blad socket\n");
+        printf("Błąd socket\n");
         return 0;
     }
 
@@ -30,37 +30,39 @@ int main() {
         printf("Nie znaleziono takiego serwera\n");
         return 0;
     }
-    printf("Polaczono z serwerem\n");
+    printf("Połączono z serwerem\n");
 
     while (1) {
-        printf("Podaj nazwe pliku ktory chcesz otrzymac:");
+        printf("Podaj nazwę pliku który chcesz otrzymać:");
         scanf("%s", buf);
         strcpy(fileName, buf);
         status = send(gniazdo, buf, strlen(buf), 0);
-        if (status < 0) {
-            printf("blad wysylania wiadomosci\n");
+        if (status <= 0) {
+            printf("Błąd wysyłania wiadomosci\n");
             return 0;
         }
         if (strcmp(buf, "Q") == 0) break;
 
         printf("Czekam na plik...\n");
         status = recv(gniazdo, buf, (sizeof buf) - 1, 0);
-        if (status < 0) {
-            printf("blad otrzymywania wiadomosci\n");
+        if (status <= 0) {
+            printf("Błąd otrzymywania wiadomosci\n");
             return 0;
         }
         buf[status] = '\0';
         if (strcmp(buf, "Q") == 0) break;
-//        if (strcmp(buf))
-        printf("----- Otrzymano plik -----\n");
-        printf("%s\n", buf);
-        printf("------ Koniec pliku ------\n");
-        FILE *file = fopen(fileName, "w");
-        size_t savedBytes = fwrite(buf, 1, status, file);
-        fclose(file);
-        printf("Zapisano %zu znaków do pliku %s\n", savedBytes, fileName);
-
+        if (strcmp(buf, "Nie ma takiego pliku") == 0) {
+            printf("Nie ma takiego pliku\n");
+        } else {
+            printf("----- Otrzymano plik -----\n");
+            printf("%s\n", buf);
+            printf("------ Koniec pliku ------\n");
+            FILE *file = fopen(fileName, "w");
+            size_t savedBytes = fwrite(buf, 1, status, file);
+            fclose(file);
+            printf("Zapisano %zu znaków do pliku %s\n", savedBytes, fileName);
+        }
     }
-    printf("Rozlaczam gniazdo\n");
+    printf("Rozłączam gniazdo\n");
     close(gniazdo);
 }
