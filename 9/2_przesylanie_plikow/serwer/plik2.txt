@@ -1,0 +1,2 @@
+Pierwsza linia pliku plik2.txt
+Druga linia pliku plik2.txt
