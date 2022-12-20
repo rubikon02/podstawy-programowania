@@ -2,12 +2,14 @@
 
 
 int main() {
-    FILE *wsk;
-    wsk = fopen("..\\8\\plik1.txt", "w");
-    if (!wsk) printf("Blad otwarcia\n");
-//    int w = fprintf(wsk, "%d %lf\n", 5, 4.5);
-    for (int i = 1; i <= 100; i++) {
-        fprintf(wsk, "%d ", i);
+    FILE *file;
+    file = fopen("plik1.txt", "w");
+    if (!file) {
+        printf("Blad otwarcia\n");
+        return 0;
     }
-    fclose(wsk);
+    for (int i = 1; i <= 100; i++) {
+        fprintf(file, "%d ", i);
+    }
+    fclose(file);
 }

@@ -11,7 +11,7 @@ struct blok {
 };
 
 #define ILOSC_BLOKOW 3
-#define NAZWA_PLIKU "..\\8\\bloki.txt"
+#define NAZWA_PLIKU "bloki.txt"
 
 void wypelnij_blok(struct blok *blok, uint16_t nr_bloku, uint16_t hash_pop, char *zawartosc);
 
@@ -82,6 +82,10 @@ void wypisz(struct blok *blok) {
 void wypisz_bloki_z_pliku(char *nazwa_pliku) {
     struct blok blok;
     FILE *file = fopen(nazwa_pliku, "r");
+    if (!file) {
+        printf("Blad otwarcia\n");
+        return;
+    }
     while (1) {
         fread(&blok, sizeof(struct blok), 1, file);
         if (feof(file)) break;
@@ -92,6 +96,10 @@ void wypisz_bloki_z_pliku(char *nazwa_pliku) {
 
 void zapisz_do_pliku(struct blok (*bloki)[ILOSC_BLOKOW], char *nazwa_pliku) {
     FILE *file = fopen(nazwa_pliku, "w");
+    if (!file) {
+        printf("Blad otwarcia\n");
+        return;
+    }
     fwrite(bloki, sizeof(struct blok), ILOSC_BLOKOW, file);
     fclose(file);
 }

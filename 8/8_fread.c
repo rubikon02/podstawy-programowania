@@ -6,12 +6,16 @@ struct student {
 };
 
 int main() {
-    struct student s1;
-    FILE *file = fopen("..\\8\\plik7.txt", "r");
+    struct student student;
+    FILE *file = fopen("plik7.txt", "r");
+    if (!file) {
+        printf("Blad otwarcia\n");
+        return 0;
+    }
     while (1) {
-        fread(&s1, sizeof(struct student), 1, file);
+        fread(&student, sizeof(struct student), 1, file);
         if (feof(file)) break;
-        printf("%d %s\n", s1.ocena, s1.nazwisko);
+        printf("%d %s\n", student.ocena, student.nazwisko);
     }
     fclose(file);
 }
