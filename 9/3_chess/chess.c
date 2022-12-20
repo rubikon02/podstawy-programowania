@@ -2,6 +2,11 @@
 #include <time.h>
 #include <string.h>
 #include <malloc.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+#define PORT 2113
+#define IP "127.0.0.23"
 
 #define DEPTH 5
 #define CHECK_PLAYER_MOVES 1
@@ -235,115 +240,154 @@ int is_player_move_valid(int board[BOARD_SIZE][BOARD_SIZE], int from_x, int from
 }
 
 int main() {
-    int board[BOARD_SIZE][BOARD_SIZE] = {       //zwykła plansza
-            {4, 1, 0, 0, 0, 0, 7, 10},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {6, 1, 0, 0, 0, 0, 7, 12},
-            {5, 1, 0, 0, 0, 0, 7, 11},
-            {3, 1, 0, 0, 0, 0, 7, 9},
-            {2, 1, 0, 0, 0, 0, 7, 8},
-            {4, 1, 0, 0, 0, 0, 7, 10},
-    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //komputer może zrobić szach mat
-//            {6, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 4, 0, 0, 0, 0},
-//            {4, 4, 0, 4, 4, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 12, 0, 0, 0,  0, 0},
-//    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz może zrobić szach mat na d4d3
-//            {12, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 10, 0, 0, 0, 0},
-//            {10, 10, 0, 10, 10, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 6, 0, 0, 0,  0, 0},
-//    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //gracz nie może ruszyć się królem na g3f3 pod szach
-//            {6, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {4, 4, 0, 4, 4, 4,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 12, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//    };
-//    int board[BOARD_SIZE][BOARD_SIZE] = {       //brak ruchu
-//            {12, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 4},
-//            {0, 0, 0, 0, 0, 0,  0, 4},
-//            {0, 0, 0, 0, 0, 0, 0, 4},
-//            {0, 0, 0, 0, 0, 0,  4, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {0, 0, 0, 0, 0, 0,  0, 0},
-//            {6, 0, 0, 0, 0, 0,  0, 0},
-//    };
+    printf("Uruchamiam serwer na %s:%d\n", IP, PORT);
 
-    int from_x, from_y, to_x, to_y, dummy;
-    float score;
-    char input[4];
+    struct sockaddr_in ser, cli;
+    int gniazdo, gniazdo2, dlugosc = sizeof cli;
+    ssize_t status;
+    char buf[200];
+
+    ser.sin_family = AF_INET;
+    ser.sin_port = htons(PORT);
+    ser.sin_addr.s_addr = inet_addr(IP);
+
+    gniazdo = socket(AF_INET, SOCK_STREAM, 0);
+    if (gniazdo == -1) {
+        printf("Błąd socket\n");
+        return 0;
+    }
+
+    status = bind(gniazdo, (struct sockaddr *) &ser, sizeof ser);
+    if (status == -1) {
+        printf("Nie można przypisać portu %d\n", PORT);
+        return 0;
+    }
+
+    status = listen(gniazdo, 10);
+    if (status == -1) {
+        printf("Błąd listen\n");
+        return 0;
+    }
 
     char *output = malloc(sizeof(char) * 2048);
-    sprintf(output, "Glebokosc sprawdzania %d\n", DEPTH);
-    sprintf(output + strlen(output), "Sprawdzanie poprawnosci ruchow gracza %d\n", CHECK_PLAYER_MOVES);
-    sprintf(output + strlen(output), "Podawaj ruchy w formacie e7e5\n");
-    sprintf(output + strlen(output), "\n");
-    print_board(output + strlen(output), board);
-    sprintf(output + strlen(output), "\n");
 
-    for (int curr_player = 1;; curr_player = !curr_player) {
-        if (curr_player) {
-            sprintf(output + strlen(output), "Komputer mysli...\n");
-            clock_t begin = clock();
-            best_move(board, 1, DEPTH, 100 * LOSE_SCORE, 100 * WIN_SCORE, &from_x, &from_y, &to_x, &to_y);
-            clock_t end = clock();
-            double time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-            sprintf(output + strlen(output), "Ruch zajal %.2fs\n", time_spent);
+    printf("Oczekuję na połączenie...\n");
+    while ((gniazdo2 = accept(gniazdo, (struct sockaddr *) &cli, (socklen_t *) &dlugosc)) >= 0) {
+        if (gniazdo2 < 0) {
+            printf("Błąd accept\n");
+            return 0;
+        }
+        printf("Nowy klient podłączył się\n");
 
-        } else {
-            sprintf(output + strlen(output), "Podaj ruch:");
-            printf("%s", output);
-            output[0] = '\0';
-            scanf("%s", input);
-            from_x = input[0] - 'a';
-            to_x = input[2] - 'a';
-            from_y = input[1] - '0' - 1;
-            to_y = input[3] - '0' - 1;
+        while (1) {
+            int board[BOARD_SIZE][BOARD_SIZE] = {       //zwykła plansza
+                    {4, 1, 0, 0, 0, 0, 7, 10},
+                    {2, 1, 0, 0, 0, 0, 7, 8},
+                    {3, 1, 0, 0, 0, 0, 7, 9},
+                    {6, 1, 0, 0, 0, 0, 7, 12},
+                    {5, 1, 0, 0, 0, 0, 7, 11},
+                    {3, 1, 0, 0, 0, 0, 7, 9},
+                    {2, 1, 0, 0, 0, 0, 7, 8},
+                    {4, 1, 0, 0, 0, 0, 7, 10},
+            };
 
-            while (CHECK_PLAYER_MOVES && !is_player_move_valid(board, from_x, from_y, to_x, to_y)) {
-                sprintf(output + strlen(output), "Podaj poprawny ruch:");
-                scanf("%s", input);
-                from_x = input[0] - 'a';
-                to_x = input[2] - 'a';
-                from_y = input[1] - '0' - 1;
-                to_y = input[3] - '0' - 1;
+            int from_x, from_y, to_x, to_y, dummy;
+            float score;
+            char input[5];
+
+            sprintf(output, "Glebokosc sprawdzania %d\n", DEPTH);
+            sprintf(output + strlen(output), "Sprawdzanie poprawnosci ruchow gracza %d\n", CHECK_PLAYER_MOVES);
+            sprintf(output + strlen(output), "Podawaj ruchy w formacie e7e5\n");
+            sprintf(output + strlen(output), "\n");
+            print_board(output + strlen(output), board);
+            sprintf(output + strlen(output), "\n");
+
+            for (int curr_player = 1;; curr_player = !curr_player) {
+                if (curr_player) {
+                    sprintf(output + strlen(output), "Komputer mysli...\n");
+                    clock_t begin = clock();
+                    best_move(board, 1, DEPTH, 100 * LOSE_SCORE, 100 * WIN_SCORE, &from_x, &from_y, &to_x, &to_y);
+                    clock_t end = clock();
+                    double time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+                    sprintf(output + strlen(output), "Ruch zajal %.2fs\n", time_spent);
+
+                } else {
+                    sprintf(output + strlen(output), "Podaj ruch:");
+                    printf("%s", output);
+                    status = send(gniazdo2, output, strlen(output), 0);
+                    if (status <= 0) {
+                        printf("Błąd wysyłania wiadomości\n");
+                        break;
+                    }
+                    output[0] = '\0';
+
+                    printf("Czekam na ruch...\n");
+                    status = recv(gniazdo2, input, sizeof(input) - 1, 0);
+                    if (status <= 0) {
+                        printf("Błąd otrzymywania wiadomości\n");
+                        break;
+                    }
+                    input[status] = '\0';
+                    printf("OTRZYMANO: #%s#\n", input);
+
+                    from_x = input[0] - 'a';
+                    to_x = input[2] - 'a';
+                    from_y = input[1] - '0' - 1;
+                    to_y = input[3] - '0' - 1;
+
+                    while (CHECK_PLAYER_MOVES && !is_player_move_valid(board, from_x, from_y, to_x, to_y)) {
+                        sprintf(output + strlen(output), "Podaj poprawny ruch:");
+                        printf("%s", output);
+                        status = send(gniazdo2, output, strlen(output), 0);
+                        if (status <= 0) {
+                            printf("Błąd wysyłania wiadomości\n");
+                            break;
+                        }
+                        output[0] = '\0';
+
+                        printf("Czekam na ruch...\n");
+                        status = recv(gniazdo2, input, sizeof(input) - 1, 0);
+                        if (status <= 0) {
+                            printf("Błąd otrzymywania wiadomości\n");
+                            break;
+                        }
+                        input[status] = '\0';
+                        printf("OTRZYMANO: #%s#\n", input);
+
+                        from_x = input[0] - 'a';
+                        to_x = input[2] - 'a';
+                        from_y = input[1] - '0' - 1;
+                        to_y = input[3] - '0' - 1;
+                    }
+                }
+                board[to_x][to_y] = board[from_x][from_y];
+                if ((board[to_x][to_y] == COMPUTER_PAWN && to_y == 7) || (board[to_x][to_y] == PLAYER_PAWN && to_y == 0)) {
+                    board[to_x][to_y] += 4;
+                    sprintf(output + strlen(output), "Pionek zostal zamieniony na hetmana\n");
+                }
+                board[from_x][from_y] = EMPTY;
+                score = (float) get_board_score(board);
+                sprintf(output + strlen(output), "%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x + 'a', from_y + 1, to_x + 'a', to_y + 1, (int) score);
+                print_board(output, board);
+                score = best_move(board, !curr_player, 2, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
+                if (score > WIN_SCORE / 2.0) {
+                    sprintf(output + strlen(output), "Przegrales\n");
+                    return 0;
+                }
+                if (score < LOSE_SCORE / 2.0) {
+                    sprintf(output + strlen(output), "Wygrales\n");
+                    return 0;
+                }
+                sprintf(output + strlen(output), "\n");
             }
+            if (status <= 0) break;
         }
-        board[to_x][to_y] = board[from_x][from_y];
-        if ((board[to_x][to_y] == COMPUTER_PAWN && to_y == 7) || (board[to_x][to_y] == PLAYER_PAWN && to_y == 0)) {
-            board[to_x][to_y] += 4;
-            sprintf(output + strlen(output), "Pionek zostal zamieniony na hetmana\n");
-        }
-        board[from_x][from_y] = EMPTY;
-        score = (float) get_board_score(board);
-        sprintf(output + strlen(output), "%c %c%d->%c%d, wynik: %d\n", PIECE_LETTERS[board[to_x][to_y]], from_x + 'a', from_y + 1, to_x + 'a', to_y + 1, (int) score);
-        print_board(output, board);
-        score = best_move(board, !curr_player, 2, 100 * LOSE_SCORE, 100 * WIN_SCORE, &dummy, &dummy, &dummy, &dummy);
-        if (score > WIN_SCORE / 2.0) {
-            sprintf(output + strlen(output), "Przegrales\n");
-            return 0;
-        }
-        if (score < LOSE_SCORE / 2.0) {
-            sprintf(output + strlen(output), "Wygrales\n");
-            return 0;
-        }
-        sprintf(output + strlen(output), "\n");
+        printf("Klient rozłączył się\n");
+        close(gniazdo2);
+        printf("Oczekuję na połączenie...\n");
     }
+    printf("Rozłączam gniazdo główne\n");
+    close(gniazdo);
+
+
 }
