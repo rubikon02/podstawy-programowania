@@ -66,7 +66,7 @@ void wstaw_el(struct student **pierwszy, char *nazwisko, int ocena) {
     nowy->ocena = ocena;
     strcpy(nowy->nazwisko, nazwisko);
 
-    if (ww == 0 || nowy->ocena < ww->nastepny->ocena) {
+    if (ww == 0 || nowy->ocena < ww->ocena) {
         nowy->nastepny = *pierwszy;
         *pierwszy = nowy;
     } else {
