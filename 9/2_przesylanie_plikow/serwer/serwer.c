@@ -61,9 +61,9 @@ int main() {
                 printf("Nie ma takiego pliku\n");
                 strcpy(buf, "Nie ma takiego pliku");
             } else {
-                size_t recivedBytes = fread(buf, 1, sizeof buf - 1, file);
+                size_t fileReadBytes = fread(buf, 1, sizeof buf - 1, file);
                 fclose(file);
-                buf[recivedBytes] = '\0';
+                buf[fileReadBytes] = '\0';
                 printf("%s\n", buf);
                 printf("Wysyłam plik\n");
             }
